@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>API Form</title>
+</head>
+<body>
+    <h1>API Form</h1>
+    <form id="api-form">
+        <label for="name">Name:</label>
+        <input type="text" id="name" required><br><br>
+        
+        <label for="locationName">Location:</label>
+        <input type="text" id="location" required><br><br>
+        <span>
+        <button type="button" id="search-btn">Search</button><br><br>
+        </span>
+        
+        <label for="locationChooser" stype="display:none;">Choose a location:</label>
+        <select id="locationValue" name="locationValue"></select>
+
+
+        
+        <button type="button" id="submit-btn">Submit</button>
+        <button type="button" id="cancel-btn">Cancel</button>
+    </form>
+
+    <script>
+        const searchBtn = document.getElementById("search-btn");
+        const submitBtn = document.getElementById("submit-btn");
+        const locationOptions = document.getElementById("locationValue");
+
+        // Function to populate location options from API response
+        function populateLocationOptions(responseData) {
+            locationOptions.innerHTML = ""; // Clear previous options
+
+            for (const item of responseData.items) {
+                const optionElement = document.createElement("option");
+                optionElement.value = item.address.label;
+                locationOptions.options[locationOptions.options.length] = new Option(item.address.label, item.address.label);
+            }
+        }
+
+        // Function to fetch data from the API and populate Input 3 (Location options)
+        async function fetchAndPopulateLocation(locationValue) {
+            // Replace this URL with the actual API URL for fetching options
+            var apiUrl = `https://autosuggest.search.hereapi.com/v1/autosuggest?at=19.0760%2C72.8777&limit=10&lang=en&q=` + encodeURIComponent(locationValue) + `&apiKey=Ieg1Jd_jFD2SnjCy2G2Xp8L3NU4WyGbMMc9GJ8LX8pI`;
+            
+            try {
+                const response = await fetch(apiUrl);
+                if (!response.ok) {
+                    throw new Error("Network response was not ok");
+                }
+                const responseData = await response.json();
+                console.log(responseData);
+                populateLocationOptions(responseData);
+                document.getElementById('location-options').style.display = "block";
+            } catch (error) {
+                console.error("Error fetching and populating location options:", error);
+            }
+        }
+
+        // Function to handle form submission (submit data to Google Forms or another API)
+        function handleSubmit() {
+            const nameInput = document.getElementById("name");
+            const locationInput = document.getElementById("location");
+
+            // Check if all fields are filled
+            if (nameInput.value && locationInput.value && locationOptions.children.length > 0) {
+                // Replace this with your code to submit data to Google Forms or another API
+                console.log("Submitting data to API...");
+            } else {
+                alert("Please fill in all fields and fetch location options.");
+            }
+        }
+
+        // Event listener for the "Search" button
+        searchBtn.addEventListener("click", () => {
+            const locationInput = document.getElementById("location");
+            const locationValue = locationInput.value;
+            
+            if (locationValue) {
+                fetchAndPopulateLocation(locationValue);
+            } else {
+                alert("Please enter a location before searching.");
+            }
+        });
+
+        // Event listener for the "Submit" button
+        submitBtn.addEventListener("click", handleSubmit);
+    </script>
+</body>
+</html>
