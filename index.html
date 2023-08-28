@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>API Form</title>
+    <title>Chalo Form</title>
 </head>
 <body>
     <h1>API Form</h1>
@@ -12,32 +12,43 @@
         <label for="locationName">Location:</label>
         <input type="text" id="location" required><br><br>
         <span>
-        <button type="button" id="search-btn">Search</button><br><br>
+            <button type="button" id="search-btn">Search</button><br><br>
         </span>
         
-        <label for="locationChooser" stype="display:none;">Choose a location:</label>
+        <label for="locationChooser" id="locationChooser" style="display:none;">Choose a location:</label>
         <select id="locationValue" name="locationValue"></select>
 
-
-        
         <button type="button" id="submit-btn">Submit</button>
-        <button type="button" id="cancel-btn">Cancel</button>
+        <br>
+        <br>
+        <div id="message"></div>
+
     </form>
 
     <script>
         const searchBtn = document.getElementById("search-btn");
         const submitBtn = document.getElementById("submit-btn");
         const locationOptions = document.getElementById("locationValue");
+        const locationMap={};
 
         // Function to populate location options from API response
         function populateLocationOptions(responseData) {
             locationOptions.innerHTML = ""; // Clear previous options
+            let i=0;
 
+            const optionElements = document.createElement("option");
+            locationMap['None']=i++;
+            optionElements.value = 'None';
+            optionElements.text = 'None';
+            locationOptions.appendChild(optionElements);
             for (const item of responseData.items) {
                 const optionElement = document.createElement("option");
+                locationMap[item.address.label]=i++;
                 optionElement.value = item.address.label;
-                locationOptions.options[locationOptions.options.length] = new Option(item.address.label, item.address.label);
+                optionElement.text = item.address.label; // Set the option text
+                locationOptions.appendChild(optionElement);
             }
+            const optionElement = document.createElement("option");
         }
 
         // Function to fetch data from the API and populate Input 3 (Location options)
@@ -53,33 +64,72 @@
                 const responseData = await response.json();
                 console.log(responseData);
                 populateLocationOptions(responseData);
-                document.getElementById('location-options').style.display = "block";
+                document.getElementById('locationChooser').style.display = "block";
             } catch (error) {
                 console.error("Error fetching and populating location options:", error);
             }
         }
 
-        // Function to handle form submission (submit data to Google Forms or another API)
+        // Function to handle form submission (send data to Firebase)
         function handleSubmit() {
-            const nameInput = document.getElementById("name");
-            const locationInput = document.getElementById("location");
+            const nameInput = document.getElementById("name").value;
+            const locationInput = document.getElementById("location").value;
+            const selectedLocation = locationOptions.value;
 
             // Check if all fields are filled
-            if (nameInput.value && locationInput.value && locationOptions.children.length > 0) {
-                // Replace this with your code to submit data to Google Forms or another API
-                console.log("Submitting data to API...");
+            if (nameInput && locationInput && selectedLocation) {
+                // Call a function to send data to Firebase
+                sendDataToFirebase(nameInput, locationInput, selectedLocation);
             } else {
                 alert("Please fill in all fields and fetch location options.");
             }
         }
 
+        // Function to send data to Firebase Realtime Database
+        function sendDataToFirebase(name, location, selectedLocation) {
+            // Replace this with your Firebase Realtime Database URL
+            const firebaseUrl = 'https://chalolocationsearchform-default-rtdb.firebaseio.com/hereMaps/data.json';
+
+            // Create an object with the data to send
+            const data = {
+                name: name,
+                location: location,
+                selectedLocation: selectedLocation,
+                rank: locationMap[selectedLocation]
+            };
+
+            // Send a POST request to Firebase
+            fetch(firebaseUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => {
+                if (response.ok) {
+                    console.log('Data sent to Firebase successfully.');
+                    document.getElementById("message").innerText='Success';
+                    document.getElementById("message").style.color='green';
+                } else {
+                    console.error('Error sending data to Firebase:', response.statusText);
+                    document.getElementById("message").innerText='Failed';
+                    document.getElementById("message").style.color='red';
+                }
+            })
+            .catch(error => {
+                console.error('Error sending data to Firebase:', error);
+                    document.getElementById("message").innerText='Failed';
+                    document.getElementById("message").style.color='red';
+            });
+        }
+
         // Event listener for the "Search" button
         searchBtn.addEventListener("click", () => {
-            const locationInput = document.getElementById("location");
-            const locationValue = locationInput.value;
+            const locationInput = document.getElementById("location").value;
             
-            if (locationValue) {
-                fetchAndPopulateLocation(locationValue);
+            if (locationInput) {
+                fetchAndPopulateLocation(locationInput);
             } else {
                 alert("Please enter a location before searching.");
             }
