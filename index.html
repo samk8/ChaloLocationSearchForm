@@ -43,9 +43,9 @@
             locationOptions.appendChild(optionElements);
             for (const item of responseData.items) {
                 const optionElement = document.createElement("option");
-                locationMap[item.title]=i++;
-                optionElement.value = item.title;
-                optionElement.text = item.title; 
+                locationMap[item.address.label]=i++;
+                optionElement.value = item.address.label;
+                optionElement.text = item.address.label; 
                 locationOptions.appendChild(optionElement);
             }
             const optionElement = document.createElement("option");
