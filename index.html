@@ -45,15 +45,15 @@
                 const optionElement = document.createElement("option");
                 locationMap[item.address.label]=i++;
                 optionElement.value = item.address.label;
-                optionElement.text = item.address.label; // Set the option text
+                optionElement.text = item.address.label; 
                 locationOptions.appendChild(optionElement);
             }
             const optionElement = document.createElement("option");
         }
 
-        // Function to fetch data from the API and populate Input 3 (Location options)
+        // Function to fetch data from the API and populate
         async function fetchAndPopulateLocation(locationValue) {
-            // Replace this URL with the actual API URL for fetching options
+           
             var apiUrl = `https://autosuggest.search.hereapi.com/v1/autosuggest?at=19.0760%2C72.8777&limit=10&lang=en&q=` + encodeURIComponent(locationValue) + `&apiKey=Ieg1Jd_jFD2SnjCy2G2Xp8L3NU4WyGbMMc9GJ8LX8pI`;
             
             try {
@@ -85,12 +85,10 @@
             }
         }
 
-        // Function to send data to Firebase Realtime Database
+        // Function to send data to Firebase
         function sendDataToFirebase(name, location, selectedLocation) {
-            // Replace this with your Firebase Realtime Database URL
             const firebaseUrl = 'https://chalolocationsearchform-default-rtdb.firebaseio.com/hereMaps/data.json';
 
-            // Create an object with the data to send
             const data = {
                 name: name,
                 location: location,
@@ -124,7 +122,7 @@
             });
         }
 
-        // Event listener for the "Search" button
+        // Search button
         searchBtn.addEventListener("click", () => {
             const locationInput = document.getElementById("location").value;
             
@@ -135,7 +133,7 @@
             }
         });
 
-        // Event listener for the "Submit" button
+        // Submit button
         submitBtn.addEventListener("click", handleSubmit);
     </script>
 </body>
