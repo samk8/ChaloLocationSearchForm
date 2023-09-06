@@ -15,8 +15,13 @@
             <button type="button" id="search-btn">Search</button><br><br>
         </span>
         
-        <label for="locationChooser" id="locationChooser" style="display:none;">Choose a location:</label>
+        <label for="locationChooser" id="locationChooser" style="display:none;">Choose a location from api1:</label>
         <select id="locationValue" name="locationValue"></select>
+        <br>
+        <br>
+
+        <label for="locationChooser" id="locationChooser2" style="display:none;">Choose a location from api2:</label>
+        <select id="locationValue2" name="locationValue"></select>
 
         <button type="button" id="submit-btn">Submit</button>
         <br>
@@ -29,7 +34,9 @@
         const searchBtn = document.getElementById("search-btn");
         const submitBtn = document.getElementById("submit-btn");
         const locationOptions = document.getElementById("locationValue");
+        const locationOptions2 = document.getElementById("locationValue2");
         const locationMap={};
+        const locationMap2={};
 
         // Function to populate location options from API response
         function populateLocationOptions(responseData) {
@@ -51,6 +58,25 @@
             const optionElement = document.createElement("option");
         }
 
+        function populateLocationOptions2(responseData) {
+            locationOptions2.innerHTML = ""; // Clear previous options
+            let i=0;
+
+            const optionElements = document.createElement("option");
+            locationMap2['None']=i++;
+            optionElements.value = 'None';
+            optionElements.text = 'None';
+            locationOptions2.appendChild(optionElements);
+            for (const item of responseData.items) {
+                const optionElement = document.createElement("option");
+                locationMap2[item.address.label]=i++;
+                optionElement.value = item.address.label;
+                optionElement.text = item.address.label;
+                locationOptions2.appendChild(optionElement);
+            }
+            const optionElement = document.createElement("option");
+        }
+
         // Function to fetch data from the API and populate
         async function fetchAndPopulateLocation(locationValue) {
            
@@ -68,6 +94,21 @@
             } catch (error) {
                 console.error("Error fetching and populating location options:", error);
             }
+
+            var apiUrl = `https://autosuggest.search.hereapi.com/v1/autosuggest?at=19.0760%2C72.8777&limit=10&lang=en&q=` + encodeURIComponent(locationValue) + `&apiKey=Ieg1Jd_jFD2SnjCy2G2Xp8L3NU4WyGbMMc9GJ8LX8pI`;
+
+            try {
+                const response = await fetch(apiUrl);
+                if (!response.ok) {
+                    throw new Error("Network response was not ok");
+                }
+                const responseData = await response.json();
+                console.log(responseData);
+                populateLocationOptions2(responseData);
+                document.getElementById('locationChooser2').style.display = "block";
+            } catch (error) {
+                console.error("Error fetching and populating location options:", error);
+            }
         }
 
         // Function to handle form submission (send data to Firebase)
@@ -75,24 +116,26 @@
             const nameInput = document.getElementById("name").value;
             const locationInput = document.getElementById("location").value;
             const selectedLocation = locationOptions.value;
+            const selectedLocation2 = locationOptions2.value;
 
             // Check if all fields are filled
             if (nameInput && locationInput && selectedLocation) {
                 // Call a function to send data to Firebase
-                sendDataToFirebase(nameInput, locationInput, selectedLocation);
+                sendDataToFirebase(nameInput, locationInput, selectedLocation,selectedLocation2);
             } else {
                 alert("Please fill in all fields and fetch location options.");
             }
         }
 
         // Function to send data to Firebase
-        function sendDataToFirebase(name, location, selectedLocation) {
+        function sendDataToFirebase(name, location, selectedLocation, selectedLocation2) {
             const firebaseUrl = 'https://chalolocationsearchform-default-rtdb.firebaseio.com/hereMaps/data.json';
 
             const data = {
                 name: name,
                 location: location,
                 selectedLocation: selectedLocation,
+                selectedLocation2: selectedLocation2,
                 rank: locationMap[selectedLocation]
             };
 
