@@ -95,7 +95,7 @@
                 console.error("Error fetching and populating location options:", error);
             }
 
-            var apiUrl = `https://autosuggest.search.hereapi.com/v1/autosuggest?at=19.0760%2C72.8777&limit=10&lang=en&q=` + encodeURIComponent(locationValue) + `&apiKey=Ieg1Jd_jFD2SnjCy2G2Xp8L3NU4WyGbMMc9GJ8LX8pI`;
+            var apiUrl = `https://maps.googleapis.com/maps/api/place/autocomplete/json?input=`+encodeURIComponent(locationValue)+`t1&locationrestriction=rectangle%3A18.8576%2C72.5956%7C19.3332%2C73.2651&key=AIzaSyBCAEv33RwgQGpFIHZFJcBGdqM3RighnKY`;
 
             try {
                 const response = await fetch(apiUrl);
