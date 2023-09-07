@@ -129,14 +129,15 @@
 
         // Function to send data to Firebase
         function sendDataToFirebase(name, location, selectedLocation, selectedLocation2) {
-            const firebaseUrl = 'https://chalolocationsearchform-default-rtdb.firebaseio.com/hereMaps/data.json';
+            const firebaseUrl = 'https://citydata-decoded-pilot-351812.asia-southeast1.firebasedatabase.app/temporaryData/search.json';
 
             const data = {
                 name: name,
-                location: location,
-                selectedLocation: selectedLocation,
-                selectedLocation2: selectedLocation2,
-                rank: locationMap[selectedLocation]
+                search_str: location,
+                hereMap_loc: selectedLocation,
+                hereMap_rank: locationMap[selectedLocation]
+                google_loc: selectedLocation2,
+                google_rank: locationMap2[selectedLocation2]
             };
 
             // Send a POST request to Firebase
