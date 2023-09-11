@@ -95,10 +95,20 @@
                 console.error("Error fetching and populating location options:", error);
             }
 
-            var apiUrl = `https://maps.googleapis.com/maps/api/place/autocomplete/json?input=`+encodeURIComponent(locationValue)+`t1&locationrestriction=rectangle%3A18.8576%2C72.5956%7C19.3332%2C73.2651&key=AIzaSyBCAEv33RwgQGpFIHZFJcBGdqM3RighnKY`;
+            var apiUrl = `https://maps.googleapis.com/maps/api/place/autocomplete/json?input=`+encodeURIComponent(locationValue)+`&locationrestriction=rectangle%3A18.8576%2C72.5956%7C19.3332%2C73.2651&key=AIzaSyBCAEv33RwgQGpFIHZFJcBGdqM3RighnKY`;
 
             try {
-                const response = await fetch(apiUrl);
+                const headers = new Headers();
+                headers.append("Host","maps.googleapis.com");
+                //headers.append('Access-Control-Request-Method','GET');
+                //headers.append('Access-Control-Request-Headers', 'Content-Type, Authorization');
+                //headers.append('Access-Control-Allow-Origin', '*');
+                //headers.append('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+                const response = await fetch(apiUrl, {
+                    method: 'GET',
+                    headers: headers//,
+                    //mode: 'no-cors'
+                });
                 if (!response.ok) {
                     throw new Error("Network response was not ok");
                 }
@@ -135,7 +145,7 @@
                 name: name,
                 search_str: location,
                 hereMap_loc: selectedLocation,
-                hereMap_rank: locationMap[selectedLocation]
+                hereMap_rank: locationMap[selectedLocation],
                 google_loc: selectedLocation2,
                 google_rank: locationMap2[selectedLocation2]
             };
@@ -169,7 +179,6 @@
         // Search button
         searchBtn.addEventListener("click", () => {
             const locationInput = document.getElementById("location").value;
-            
             if (locationInput) {
                 fetchAndPopulateLocation(locationInput);
             } else {
