@@ -67,11 +67,11 @@
             optionElements.value = 'None';
             optionElements.text = 'None';
             locationOptions2.appendChild(optionElements);
-            for (const item of responseData.items) {
+            for (const item of responseData.predictions) {
                 const optionElement = document.createElement("option");
-                locationMap2[item.address.label]=i++;
-                optionElement.value = item.address.label;
-                optionElement.text = item.address.label;
+                locationMap2[item.description]=i++;
+                optionElement.value = item.description;
+                optionElement.text = item.description;
                 locationOptions2.appendChild(optionElement);
             }
             const optionElement = document.createElement("option");
@@ -94,6 +94,23 @@
             } catch (error) {
                 console.error("Error fetching and populating location options:", error);
             }
+
+            (function() {
+                var cors_api_host = 'cors-anywhere.herokuapp.com';
+                var cors_api_url = 'https://' + cors_api_host + '/';
+                var slice = [].slice;
+                var origin = window.location.protocol + '//' + window.location.host;
+                var open = XMLHttpRequest.prototype.open;
+                XMLHttpRequest.prototype.open = function() {
+                    var args = slice.call(arguments);
+                    var targetOrigin = /^https?:\/\/([^\/]+)/i.exec(args[1]);
+                    if (targetOrigin && targetOrigin[0].toLowerCase() !== origin &&
+                        targetOrigin[1] !== cors_api_host) {
+                        args[1] = cors_api_url + args[1];
+                    }
+                    return open.apply(this, args);
+                };
+            })();
             const proxyurl = "https://cors-anywhere.herokuapp.com/";
             var apiUrl = `https://maps.googleapis.com/maps/api/place/autocomplete/json?input=`+encodeURIComponent(locationValue)+`&locationrestriction=rectangle%3A18.8576%2C72.5956%7C19.3332%2C73.2651&key=AIzaSyBCAEv33RwgQGpFIHZFJcBGdqM3RighnKY`;
 
