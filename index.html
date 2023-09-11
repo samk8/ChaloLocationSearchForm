@@ -4,7 +4,7 @@
     <title>Chalo Form</title>
 </head>
 <body>
-    <h1>Chalo Location Search</h1>
+    <h1>Maintenance Mode: Chalo Location Search</h1>
     <form id="api-form">
         <label for="name">Name:</label>
         <input type="text" id="name" required><br><br>
@@ -50,7 +50,7 @@
             locationOptions.appendChild(optionElements);
             for (const item of responseData.items) {
                 const optionElement = document.createElement("option");
-                locationMap[item.address.label]=i++;
+                locationMap[item.address.label]={'rank':i++,'position':item.position};
                 optionElement.value = item.address.label;
                 optionElement.text = item.address.label; 
                 locationOptions.appendChild(optionElement);
@@ -69,7 +69,7 @@
             locationOptions2.appendChild(optionElements);
             for (const item of responseData.predictions) {
                 const optionElement = document.createElement("option");
-                locationMap2[item.description]=i++;
+                locationMap2[item.description]={'rank':i++,'placeId':'ChIJpZaPPVLI5zsR3mNztqOmWvE'};
                 optionElement.value = item.description;
                 optionElement.text = item.description;
                 locationOptions2.appendChild(optionElement);
